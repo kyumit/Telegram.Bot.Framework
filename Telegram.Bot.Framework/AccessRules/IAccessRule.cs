@@ -10,6 +10,6 @@ namespace Telegram.Bot.Framework.AccessRules
 {
     public interface IAccessRule
     {
-        bool HasAccess(ITelegramBotClient client, Update update);
+        Task<bool> HasAccess(ITelegramBotClient client, Update update, object args);
     }
 }

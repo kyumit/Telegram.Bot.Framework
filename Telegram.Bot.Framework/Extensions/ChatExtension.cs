@@ -24,5 +24,17 @@ namespace Telegram.Bot.Framework
                 return (await client.GetChatAdministratorsAsync(chat.Id)).Select(chatMember => chatMember.User).ToList();
             return null;
         }
+        public static async Task<bool> IsAdministrator(this Chat chat, ITelegramBotClient client, User user)
+        {
+            if (chat != null)
+                return (await client.GetChatAdministratorsAsync(chat.Id)).FirstOrDefault(chatMember => chatMember.User.Id == user.Id) != null;
+            return false;
+        }
+        public static async Task<bool> IsOwner(this Chat chat, ITelegramBotClient client, User user)
+        {
+            if (chat != null)
+                return (await chat.GetOwner(client)).Id == user.Id;
+            return false;
+        }
     }
 }

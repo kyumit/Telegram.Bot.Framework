@@ -11,6 +11,7 @@ namespace Telegram.Bot.Framework.Attributes
     {
         Command = 1 << 0,
         CallbackQueryCommand = 1 << 1,
-        All = (1 << 2)-1
+        ChannelPost = 1 << 2,
+        All = (1 << 3)-1
     }
 }

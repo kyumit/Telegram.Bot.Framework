@@ -18,24 +18,24 @@ namespace Telegram.Bot.Framework.Entities
         public object Command => _command;
         public CommandAttribute CommandAttribute => _commandAttribute;
         public object Args { get; set; } = null;
-        public MethodInfo CanInvokeMethodInfo { get; set; } = null;
-        public MethodInfo InvokeMethodInfo { get; set; } = null;
+        public Func<ITelegramBotClient, Update, object, bool> CanInvokeMethodInfo { get; set; } = null;
+        public Func<ITelegramBotClient, Update, object, bool> InvokeMethodInfo { get; set; } = null;
 
         public CommandMatch(object command, CommandAttribute commandAttribute)
         {
             _command = command;
             _commandAttribute = commandAttribute;
         }
-        public async Task<bool> Invoke(ITelegramBotClient client, Update update)
+        public bool Invoke(ITelegramBotClient client, Update update)
         {
-            if (InvokeMethodInfo is MethodInfo invoke && Command is object command)
-                return await (invoke.Invoke(command, new object[] { client, update, Args }) as Task<bool>);
+            if (InvokeMethodInfo is var invoke)
+                return invoke(client, update, Args);
             return true;
         }
-        public async Task<bool> CanInvoke(ITelegramBotClient client, Update update)
+        public bool CanInvoke(ITelegramBotClient client, Update update)
         {
-            if (CanInvokeMethodInfo is MethodInfo canInvoke && Command is object command)
-                return await (canInvoke.Invoke(command, new object[] { client, update, Args }) as Task<bool>);
+            if (CanInvokeMethodInfo is var canInvoke && canInvoke != null)
+                return canInvoke(client, update, Args);
             return false;
         }
     }

@@ -13,7 +13,7 @@ namespace Telegram.Bot.Framework.Attributes
         private static Regex _regex = new Regex(@"(\{.+?\})");
         private string _expression;
         private CommandUsage _commandUsage = CommandUsage.All;
-        public string Expression { get => _expression; set => SetExpression(value); }
+        public virtual string Expression { get => _expression; set => SetExpression(value); }
         public CommandUsage CommandUsage { get => _commandUsage; set => _commandUsage = value; }
         public Type ArgumentType { get; set; } = null;
         public Regex RegularExpression { get; private set; }
@@ -24,30 +24,36 @@ namespace Telegram.Bot.Framework.Attributes
         {
             SetExpression(expression);
         }
-        private void SetExpression(string expression)
+        protected void SetExpression(string expression)
         {
-            if (string.IsNullOrWhiteSpace(expression)) throw new ArgumentException(nameof(expression) + "is empty.");
-
+            if (string.IsNullOrWhiteSpace(expression))
+            {
+                //throw new ArgumentException(nameof(expression) + " is empty.");
+                _expression = null;
+                return;
+            }
             _expression = expression.Trim().ToLower();
             if (_regex.IsMatch(_expression))
             {
                 IsUsingRegularExpression = true;
+                string regexStr = "^" + _expression + "$";
                 string[] splittedInput = _regex.Split(_expression);
-                StringBuilder stringBuilder = new StringBuilder("^");
+                //StringBuilder stringBuilder = new StringBuilder("^");
                 List<string> parameters = new List<string>();
                 foreach (string item in splittedInput)
                 {
                     string trimmed = item.Trim();
                     if (trimmed.StartsWith("{") && trimmed.EndsWith("}"))
                     {
-                        stringBuilder.Append("(.+)");
-                        parameters.Add(trimmed.Substring(1, trimmed.Length - 2));
+                        regexStr = regexStr.Replace(item, "(.+)");
+                       // stringBuilder.Append("(.+)");
+                        parameters.Add(trimmed.Substring(1, trimmed.Length - 2).ToLower());
                     }
-                    else
-                        stringBuilder.Append(trimmed);
+               //     else
+           //             stringBuilder.Append(trimmed);
                 }
-                stringBuilder.Append("$");
-                RegularExpression = new Regex(stringBuilder.ToString());
+                //stringBuilder.Append("$");
+                RegularExpression = new Regex(regexStr);
                 Parameters = parameters.ToArray();
             }
             else

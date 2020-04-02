@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessRules\IAccessRule.cs" />
+    <Compile Include="AntiFloodManager.cs" />
     <Compile Include="Attributes\CommandAttribute.cs" />
     <Compile Include="Attributes\CommandUsage.cs" />
     <Compile Include="Commands\CommandManager.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="Entities\CommandMatch.cs" />
     <Compile Include="Extensions\ChatExtension.cs" />
     <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Extensions\UpdateExtension.cs" />
     <Compile Include="Menus\InlineButton.cs" />
     <Compile Include="Menus\InlineMenu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
