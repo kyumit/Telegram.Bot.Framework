@@ -17,6 +17,7 @@ namespace Telegram.Bot.Framework.Commands
         private const string COMMAND_START = "/";
         private readonly List<object> _commands = new List<object>();
         private readonly string _botName = string.Empty;
+        public IReadOnlyList<object> Commands => _commands;
         #region Register Command
         //public void RegisterCommand(ICommand command)
         //{
@@ -84,10 +85,15 @@ namespace Telegram.Bot.Framework.Commands
                     q = update.ChannelPost.Text;
                     usage = CommandUsage.ChannelPost;
                     break;
+                case Types.Enums.UpdateType.EditedMessage:
+                    q = update.EditedMessage.Text;
+                    usage = CommandUsage.Command;
+                    break;
                 default:
                     break;
             }
-
+            if (q == null)
+                q = string.Empty;
             CommandMatch match = await GetCommandMatch(client, update, q, usage);
             if (match == null && q != null)
                 match = await GetCommandMatch(client, update, null, usage);
